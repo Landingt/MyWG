@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);//允许webview加载js代码
         webView.addJavascriptInterface(new JsInterface(),"Launcher");//给webview添加Js接口
         webView.loadUrl("http://www.dearhander.com:3000");
+        webView.loadUrl("http://www.baidu.com");
         webView.setWebViewClient(new WebViewClient());
     }
     void setStatusBar() {
