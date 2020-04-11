@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         webView=findViewById(R.id.web);
         webView.getSettings().setJavaScriptEnabled(true);//允许webview加载js代码
         webView.addJavascriptInterface(new JsInterface(),"Launcher");//给webview添加Js接口
-        webView.loadUrl("http://www.baidu1.com");
+        webView.loadUrl("http://www.baidu.com");
         webView.setWebViewClient(new WebViewClient());
     }
     void setStatusBar() {
@@ -36,5 +37,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            webView.goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 }
