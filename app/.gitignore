@@ -1,0 +1,7 @@
+# IDEs and editors
+/.gradle/**
+**/build/
+
+*.iml
+**/**.iml
+/.idea/*
