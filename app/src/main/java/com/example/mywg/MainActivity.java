@@ -20,9 +20,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setStatusBar();
         webView=findViewById(R.id.web);
+
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);  //提高渲染的优先级
+
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
+        webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);//允许webview加载js代码
         webView.addJavascriptInterface(new JsInterface(),"Launcher");//给webview添加Js接口
-        webView.loadUrl("http://www.baidu.com");
+        webView.loadUrl("file:///android_asset/login.html");
         webView.setWebViewClient(new WebViewClient());
     }
     void setStatusBar() {

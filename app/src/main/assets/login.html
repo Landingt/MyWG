@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width,user-scalable=no" name="viewport" />
+    <title>登陆</title>
+    <!--动画样式-->
+    <link rel="stylesheet" type="text/css" href="Styles/animate.min.css" />
+    <!--界面样式-->
+    <link rel="stylesheet" type="text/css" href="Styles/login.css" />
+</head>
+<body>
+<div class="signin-content" style="display:normal">
+    <form class="flipInX animated" autocomplete="off">
+        <div class="signin-form">
+            <div id="service_url" style="display:none;">
+                <div class="signin-input" id="signin-ipt">
+                    <img src="Image/login_1.png"/>
+                    <input type="text" id="inputServiceURL" name="inputServiceURL" placeholder="请输入服务器地址" required="" autofocus="" value="">
+                    <select id="httpType" required="" autofocus="" value="" style="position: absolute;">
+                        <option value ="http" selected="selected">http</option>
+                        <option value ="https">https</option>
+                    </select>
+                </div>
+            </div>
+            <div class="signin-input">
+                <img src="Image/login_2.png"/>
+                <input type="text" id="inputName" name="inputName" placeholder="请输入用户名" required="" autofocus="" value="">
+            </div>
+            <div class="signin-input">
+                <img src="Image/login_3.png"/>
+                <input type="password" id="inputPassword" name="inputPassword" placeholder="请输入密码" required="" data-action="loginOnKey" value="">
+            </div>
+            <button class="btn btns-style-5" data-action="loginSumit">登 录 <img src="Image/login_4.png"/></button>
+            <p class="advanced_service" data-action="loginAdvanced">高级</p>
+            <div id="message" style="width:100%;text-align:center;color:#fff;"></div>
+            <!--<p class="signin-copyright">深圳市敢为软件技术有限公司</p>-->
+        </div>
+    </form>
+</div>
+<div id="loading-center" style="display:none">
+    <div id="loading-center-absolute">
+        <div class="object object_zero"><img src="Image/00.png" /></div>
+        <div class="object object_one"><img src="Image/01.png" /></div>
+        <div class="object object_two"><img src="Image/02.png" /></div>
+        <div class="object object_three"><img src="Image/03.png" /></div>
+    </div>
+    <p class="loading-text">正在连接…</p>
+</div>
+<iframe id="mainapp" name="mainapps" style="display:none;"></iframe>
+<div class="loadin-center2" style="display:none">正在进入，请稍后…</div>
+<script src="Scripts/jquery-1.10.1.min.js"></script>
+<script src="Scripts/md5.js"></script>
+<script src="Scripts/login.js"></script>
+</body>
+</html>
