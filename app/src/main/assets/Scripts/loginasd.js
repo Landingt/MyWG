@@ -1,4 +1,4 @@
-﻿//登录
+﻿ //登录
 document.getElementsByTagName("form")[0].onsubmit = function () {
     return false;
 }

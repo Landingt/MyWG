@@ -39,6 +39,7 @@ function beOverdue(serviceUrl, username, password) {
 
 function loginAuthentication(serviceUrl, username, password) {
     showLoading();
+
     alarmccenterContext = AlarmCenterV2Context;
     alarmccenterContext.service = serviceUrl;
     alarmccenterContext.userName = username;
@@ -56,7 +57,7 @@ function loginAuthentication(serviceUrl, username, password) {
                 loginErrorInit(serviceUrl, username, password)
                 showMessage("登陆失败!");
             });
-        });        
+        });
     }).fail(function() {
         //使用旧版接口
         console.log("尝试连接第一个版");
@@ -137,7 +138,7 @@ function loginErrorInit(serviceUrl, username, password){
     try{ipStr = serviceUrl.split("://")[1];}catch(e){}
      $("#inputServiceURL").val(ipStr);
      $("#inputName").val(username);
-     $("#inputPassword").val(password);   
+     $("#inputPassword").val(password);
 }
 
 function showMessage(msg) {
@@ -206,7 +207,7 @@ var AlarmCenterV2Context = {
                 username: this.userName,
                 userpwd: md5(this.password)
             }
-        })       
+        })
     },
     saveCookie: function() {
         try {
@@ -246,7 +247,9 @@ var AlarmCenterV2Context = {
         }
     },
     gotoHome: function() {
-        window.location.href = this.service + "/Views/Mobile/home.html?terminal=Mobile.App&userName=" + this.userName + "&service_url=" + this.getServerHostName() + "&appkey=" + this.appkey + "&infokey=" + this.infokey;
+
+        window.location.href = this.service + "/Views/Mobile/home.html?terminal=Mobile.App&userName=" + this.userName
+        + "&service_url=" + this.getServerHostName() + "&appkey=" + this.appkey + "&infokey=" + this.infokey;
     },
     getServerHostName: function() {
         var wcf = this.service.split('://')[1];
@@ -318,7 +321,8 @@ var AlarmCenterV1Context = {
         }))
     },
     gotoHome: function() {
-        window.location.href = this.service + "/Views/Mobile/home.html?terminal=Mobile.App&userName=" + this.userName + "&service_url=" + this.getServerHostName();
+        window.location.href = this.service + "/Views/Mobile/home.html?terminal=Mobile.App&userName=" + this.userName +
+         "&service_url=" + this.getServerHostName();
     },
     getServerHostName: function() {
         var wcf = this.service.split('://')[1];
