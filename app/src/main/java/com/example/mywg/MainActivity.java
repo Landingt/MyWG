@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,8 +22,8 @@ import java.util.HashMap;
 
 import static java.lang.Math.log;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements JsBridge{
+    private Handler mHandler;
     private WebView webView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +45,13 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);//允许webview加载js代码
-        webView.addJavascriptInterface(new JsInterface(),"Launcher");//给webview添加Js接口
+        webView.addJavascriptInterface(new myJavaFunAndroid(this),"myJavaFunAndroid");//给webView添加JS接口
         webView.loadUrl("file:///android_asset/login.html");
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                exeJsCode(view,readAssetsJsFile("Scripts/jquery-1.10.1.min.js"));
-            }
-        });
+
         webView.getSettings().setUserAgentString(webView.getSettings().getUserAgentString());
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setAppCacheEnabled(true);//设置Application缓存API是否开启，默认false，设置有效的缓存路径参考setAppCachePath(String path)方法
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setDatabaseEnabled(true);
     }
@@ -126,4 +121,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public void setUrl(String value) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.loadUrl("file:///android_asset/login.html");
+            }
+        });
+
+    }
 }
