@@ -29,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setStatusBar();
+        inti();
+
+
+    }
+
+    private void inti() {
         webView=findViewById(R.id.web);
 
         WebSettings webSettings = webView.getSettings();
@@ -53,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setDatabaseEnabled(true);
-
     }
 
     private void exeJsCode(WebView view, String readAssetsJsFile) {
