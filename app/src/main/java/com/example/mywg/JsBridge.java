@@ -4,4 +4,10 @@ public interface JsBridge {
     void setUrl(String value);
 
     void clearAppCache();
+
+    void startVice();
+
+    void openVice();
+
+
 }

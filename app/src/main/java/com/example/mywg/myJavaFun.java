@@ -20,4 +20,14 @@ public class myJavaFun {
     public void AppCacheClear(){
         jsBridge.clearAppCache();
     }
+    @JavascriptInterface
+    public void StartVoice(int value){
+        jsBridge.startVice();
+    }
+
+    @JavascriptInterface
+    public void VoiceOpen(){
+        jsBridge.openVice();
+    }
+
 }
