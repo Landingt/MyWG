@@ -30,4 +30,8 @@ public class myJavaFun {
         jsBridge.openVice();
     }
 
+    @JavascriptInterface
+    public void StopVoice(){
+        jsBridge.stopVice();
+    }
 }

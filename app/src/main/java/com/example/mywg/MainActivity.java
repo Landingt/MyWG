@@ -95,7 +95,17 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
         setStatusBar();
         inti();
 
+//        Toast.makeText(getApplicationContext(),"asd",Toast.LENGTH_SHORT).show();
+        // 初始化识别无UI识别对象
+        // 使用SpeechRecognizer对象，可根据回调消息自定义界面；
+        mIat = SpeechRecognizer.createRecognizer(getApplicationContext(), mInitListener);
 
+        // 初始化听写Dialog，如果只使用有UI听写功能，无需创建SpeechRecognizer
+        // 使用UI听写功能，请根据sdk文件目录下的notice.txt,放置布局文件和图片资源
+        mIatDialog = new RecognizerDialog(getApplicationContext(), mInitListener);
+
+        mSharedPreferences = getSharedPreferences(IatSettings.PREFER_NAME,
+                Activity.MODE_PRIVATE);
     }
 
     private void inti() {
@@ -185,10 +195,7 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
     int ret = 0; // 函数调用返回值
     @Override
     public void startVice() {
-//        mHandler.post(new Runnable() {
 
-//            @Override
-//            public void run() {
 //                Toast.makeText(getApplicationContext(),"444455",Toast.LENGTH_LONG).show();
                 if( null == mIat ){
                     // 创建单例失败，与 21001 错误为同样原因，参考 http://bbs.xfyun.cn/forum.php?mod=viewthread&tid=9688
@@ -203,51 +210,39 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
                 mIatResults.clear();
                 // 设置参数
                 setParam();
+
                 boolean isShowDialog = mSharedPreferences.getBoolean(
                         getString(R.string.pref_key_iat_show), false);
-                if (isShowDialog) {
-                    // 显示听写对话框
-                    mIatDialog.setListener(mRecognizerDialogListener);
-                    mIatDialog.show();
+
+                // 不显示听写对话框
+                ret = mIat.startListening(mRecognizerListener);
+
+                if (ret != ErrorCode.SUCCESS) {
+                    Toast.makeText(getApplicationContext(),"听写失败,错误码：\" + ret+\",请点击网址https://www.xfyun.cn/document/error-code查询解决方案",Toast.LENGTH_LONG).show();
 
                 } else {
+                    Toast.makeText(getApplicationContext(),getString(R.string.text_begin),Toast.LENGTH_LONG).show();
 
-                    // 不显示听写对话框
-                    ret = mIat.startListening(mRecognizerListener);
-
-//                    if (ret != ErrorCode.SUCCESS) {
-//                        Toast.makeText(getApplicationContext(),"听写失败,错误码：\" + ret+\",请点击网址https://www.xfyun.cn/document/error-code查询解决方案",Toast.LENGTH_LONG).show();
-//
-//                    } else {
-//                        Toast.makeText(getApplicationContext(),"getString(R.string.text_begin)",Toast.LENGTH_LONG).show();
-//
-//                    }
                 }
-//            }
-//        });
+
+
 
     }
     @Override
     public void openVice() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                //Toast.makeText(getApplicationContext(),"asd",Toast.LENGTH_LONG).show();
-                // 初始化识别无UI识别对象
-                // 使用SpeechRecognizer对象，可根据回调消息自定义界面；
-                mIat = SpeechRecognizer.createRecognizer(MainActivity.this, mInitListener);
 
-                // 初始化听写Dialog，如果只使用有UI听写功能，无需创建SpeechRecognizer
-                // 使用UI听写功能，请根据sdk文件目录下的notice.txt,放置布局文件和图片资源
-                mIatDialog = new RecognizerDialog(MainActivity.this, mInitListener);
 
-                mSharedPreferences = getSharedPreferences(IatSettings.PREFER_NAME,
-                        Activity.MODE_PRIVATE);
-
-            }
-        });
 
     }
+
+    @Override
+    public void stopVice() {
+//        Toast.makeText(getApplicationContext(),"stopVice",Toast.LENGTH_SHORT).show();
+        mIat.stopListening();
+
+    }
+
+
     /**
      * 听写UI监听器
      */
@@ -262,8 +257,7 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
          * 识别回调错误.
          */
         public void onError(SpeechError error) {
-            showTip(error.getPlainDescription(true));
-
+            Toast.makeText(getApplicationContext(),error.getPlainDescription(true),Toast.LENGTH_SHORT).show();
         }
 
     };
@@ -276,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
         public void onInit(int code) {
             Log.d(TAG, "SpeechRecognizer init() code = " + code);
             if (code != ErrorCode.SUCCESS) {
-                showTip("初始化失败，错误码：" + code+",请点击网址https://www.xfyun.cn/document/error-code查询解决方案");
+                Toast.makeText(getApplicationContext(),"初始化失败，错误码：\" + code+\",请点击网址https://www.xfyun.cn/document/error-code查询解决方案",Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -332,22 +326,21 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
         @Override
         public void onBeginOfSpeech() {
             // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
-            showTip("开始说话");
+//            Toast.makeText(getApplicationContext(),"开始说话",Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onError(SpeechError error) {
             // Tips：
             // 错误码：10118(您没有说话)，可能是录音机权限被禁，需要提示用户打开应用的录音权限。
-
-            showTip(error.getPlainDescription(true));
+//            Toast.makeText(getApplicationContext(),error.getPlainDescription(true),Toast.LENGTH_SHORT).show();
 
         }
 
         @Override
         public void onEndOfSpeech() {
             // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
-            showTip("结束说话");
+//            Toast.makeText(getApplicationContext(),"结束说话",Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -360,7 +353,8 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
 
             }else if(resultType.equals("plain")) {
                 buffer.append(results.getResultString());
-//                webView.loadUrl("javascript:callbackVoiceXFData('"+buffer.toString()+"');");
+
+                webView.loadUrl("javascript:callbackVoiceXFData('"+buffer.toString()+"');");
 
             }
 
@@ -369,7 +363,8 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
 
         @Override
         public void onVolumeChanged(int volume, byte[] data) {
-            showTip("当前正在说话，音量大小：" + volume);
+
+//            Toast.makeText(getApplicationContext(),"当前正在说话，音量大小：" + volume,Toast.LENGTH_SHORT).show();
             Log.d(TAG, "返回音频数据："+data.length);
         }
 
@@ -384,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
         }
     };
     private void printResult(RecognizerResult results) {
+//        Toast.makeText(getApplicationContext(),"123456",Toast.LENGTH_SHORT).show();
         String text = JsonParser.parseIatResult(results.getResultString());
 
         String sn = null;
@@ -401,8 +397,12 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
         for (String key : mIatResults.keySet()) {
             resultBuffer.append(mIatResults.get(key));
         }
+//        Toast.makeText(getApplicationContext(),resultBuffer.toString(),Toast.LENGTH_SHORT).show();
 
-//        webView.loadUrl("javascript:callbackVoiceXFData('"+buffer.toString()+"');");
+                webView.loadUrl("javascript:callbackVoiceXFData('"+resultBuffer.toString()+"');");
+
+
+
     }
     @Override
     protected void onDestroy() {
@@ -431,10 +431,7 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
     }
 
 
-    private void showTip(final String str) {
-        mToast.setText(str);
-        mToast.show();
-    }
+
     private void requestPermissions(){
         try {
             if (Build.VERSION.SDK_INT >= 23) {

@@ -9,5 +9,5 @@ public interface JsBridge {
 
     void openVice();
 
-
+    void stopVice();
 }
