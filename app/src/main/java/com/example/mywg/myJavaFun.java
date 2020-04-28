@@ -34,4 +34,9 @@ public class myJavaFun {
     public void StopVoice(){
         jsBridge.stopVice();
     }
+
+    @JavascriptInterface
+    public void  RichScan(){
+        jsBridge.richScan();
+    }
 }

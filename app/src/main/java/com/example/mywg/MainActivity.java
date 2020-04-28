@@ -1,12 +1,16 @@
 package com.example.mywg;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -41,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 import com.example.mywg.Json.JsonParser;
 import com.example.mywg.Settings.IatSettings;
 import com.example.mywg.Utils.CacheUtil;
+import com.example.mywg.zxing.android.CaptureActivity;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.RecognizerListener;
@@ -66,7 +71,9 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
     private RecognizerDialog mIatDialog;
     // 用HashMap存储听写结果
     private HashMap<String, String> mIatResults = new LinkedHashMap<String, String>();
-
+    private static final String DECODED_CONTENT_KEY = "codedContent";
+    private static final String DECODED_BITMAP_KEY = "codedBitmap";
+    private static final int REQUEST_CODE_SCAN = 0x0000;
 
     private TextView languageText;
     private Toast mToast;
@@ -242,6 +249,23 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
 
     }
 
+    @Override
+    public void richScan() {
+        //动态权限申请
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 1);
+            goScan();
+        } else {
+            goScan();
+        }
+    }
+    /**
+     * 跳转到扫码界面扫码
+     */
+    private void goScan(){
+        Intent ie = new Intent(getApplicationContext(), CaptureActivity.class);
+        startActivityForResult(ie, REQUEST_CODE_SCAN);
+    }
 
     /**
      * 听写UI监听器
@@ -431,7 +455,35 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                } else {
+                    Toast.makeText(this, "你拒绝了权限申请，可能无法打开相机扫码哟！", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 扫描二维码/条码回传
+        if (requestCode == REQUEST_CODE_SCAN && resultCode == RESULT_OK) {
+            if (data != null) {
+                //返回的文本内容
+                String content = data.getStringExtra(DECODED_CONTENT_KEY);
+                //返回的BitMap图像
+                Bitmap bitmap = data.getParcelableExtra(DECODED_BITMAP_KEY);
+                webView.loadUrl("javascript:callbackVoiceXFData('"+content+"');");
+
+            }
+        }
+    }
     private void requestPermissions(){
         try {
             if (Build.VERSION.SDK_INT >= 23) {
