@@ -31,6 +31,11 @@
                 <img src="Image/login_3.png"/>
                 <input type="password" id="inputPassword" name="inputPassword" placeholder="请输入密码" required="" data-action="loginOnKey" value="">
             </div>
+<!--            122-->
+            <div class="signin-input signin-verificationCode">
+                <canvas id="canvas"  onclick="verificationCode()" ></canvas>
+                <input type="text" id="verificationCode" placeholder="验证码" required=""   value="" />
+            </div>
             <button class="btn btns-style-5" data-action="loginSumit">登 录 <img src="Image/login_4.png"/></button>
             <p class="advanced_service" data-action="loginAdvanced">高级</p>
             <div id="message" style="width:100%;text-align:center;color:#fff;"></div>
