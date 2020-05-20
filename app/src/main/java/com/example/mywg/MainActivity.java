@@ -21,9 +21,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
@@ -259,6 +261,33 @@ public class MainActivity extends AppCompatActivity implements JsBridge{
             goScan();
         }
     }
+
+    //获取AppStatusBarHeight
+    @Override
+    public void getStatusBarHeight() {
+        Log.d(TAG, " TAGT");
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                WindowManager windowManager = getWindowManager();
+                Display display = windowManager.getDefaultDisplay();
+                int screenWidth = display.getWidth();
+                int screenHeight = display.getHeight();
+                int height = 30;
+                int resourceId = getApplicationContext().getResources().getIdentifier("status_bar_height", "dimen", "android");
+                if (resourceId > 0) {
+                    height = getApplicationContext().getResources().getDimensionPixelSize(resourceId);
+                }
+               // Toast.makeText(getApplicationContext(),"javascript:getStatusBarHeight('"+height+"','"+screenHeight+"');",Toast.LENGTH_LONG).show();
+
+                webView.loadUrl("javascript:setStatusBarHeight('"+height+"','"+screenHeight+"');");
+            }
+        });
+
+
+
+    }
+
     /**
      * 跳转到扫码界面扫码
      */

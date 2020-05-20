@@ -12,4 +12,6 @@ public interface JsBridge {
     void stopVice();
 
     void richScan();
+
+    void getStatusBarHeight();
 }

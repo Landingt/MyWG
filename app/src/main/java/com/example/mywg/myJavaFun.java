@@ -39,4 +39,9 @@ public class myJavaFun {
     public void  RichScan(){
         jsBridge.richScan();
     }
+
+    @JavascriptInterface
+    public void  getStatusBarHeight(){
+        jsBridge.getStatusBarHeight();
+    }
 }
